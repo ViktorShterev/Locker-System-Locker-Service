@@ -18,6 +18,9 @@ public class LockerUnit {
     @Column
     private boolean occupied;
 
+    @Column(name = "package_id")
+    private Long packageId;
+
     @Column(unique = true, name = "access_code")
     private String accessCode;
 
@@ -69,5 +72,13 @@ public class LockerUnit {
 
     public void setLocker(Locker locker) {
         this.locker = locker;
+    }
+
+    public Long getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(Long packageId) {
+        this.packageId = packageId;
     }
 }
