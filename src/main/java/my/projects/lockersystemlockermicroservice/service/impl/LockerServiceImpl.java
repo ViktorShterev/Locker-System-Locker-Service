@@ -2,11 +2,13 @@ package my.projects.lockersystemlockermicroservice.service.impl;
 
 import my.projects.lockersystemlockermicroservice.dto.CreateLockerDTO;
 import my.projects.lockersystemlockermicroservice.dto.LockerAvailabilityDTO;
+import my.projects.lockersystemlockermicroservice.dto.LockerLocationDTO;
 import my.projects.lockersystemlockermicroservice.entity.Locker;
 import my.projects.lockersystemlockermicroservice.entity.LockerUnit;
 import my.projects.lockersystemlockermicroservice.enums.LockerStatusEnum;
 import my.projects.lockersystemlockermicroservice.enums.LockerUnitSizeEnum;
 import my.projects.lockersystemlockermicroservice.repository.LockerRepository;
+import my.projects.lockersystemlockermicroservice.repository.LockerUnitRepository;
 import my.projects.lockersystemlockermicroservice.service.LockerService;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +19,41 @@ import java.util.stream.Collectors;
 public class LockerServiceImpl implements LockerService {
 
     private final LockerRepository lockerRepository;
+    private final LockerUnitRepository lockerUnitRepository;
 
-    public LockerServiceImpl(LockerRepository lockerRepository) {
+    public LockerServiceImpl(LockerRepository lockerRepository, LockerUnitRepository lockerUnitRepository) {
         this.lockerRepository = lockerRepository;
+        this.lockerUnitRepository = lockerUnitRepository;
     }
 
     @Override
-    public void createLocker(CreateLockerDTO lockerDTO) {
+    public boolean createLocker(CreateLockerDTO lockerDTO) {
 
-        Locker locker = new Locker();
+        if (this.lockerRepository.findByLocation(lockerDTO.getLocation()).isEmpty()) {
 
-        locker.setLocation(lockerDTO.getLocation());
-        locker.setLockerUnits(createLockerUnits(lockerDTO));
-        locker.setLockerStatus(LockerStatusEnum.AVAILABLE);
+            Locker locker = new Locker();
 
-        this.lockerRepository.save(locker);
+            locker.setLocation(lockerDTO.getLocation());
+            locker.setLockerStatus(LockerStatusEnum.AVAILABLE);
+
+            Locker saved = this.lockerRepository.save(locker);
+
+            saved.setLockerUnits(createLockerUnits(lockerDTO, saved));
+
+            this.lockerRepository.save(saved);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public List<LockerLocationDTO> getLockerLocations() {
+
+        return this.lockerRepository.findAll().stream()
+                .map(locker -> new LockerLocationDTO(locker.getLocation()))
+                .toList();
     }
 
     @Override
@@ -55,25 +77,30 @@ public class LockerServiceImpl implements LockerService {
     }
 
 
-    private Set<LockerUnit> createLockerUnits(CreateLockerDTO lockerDTO) {
+    private Set<LockerUnit> createLockerUnits(CreateLockerDTO lockerDTO, Locker locker) {
 
         Set<LockerUnit> lockerUnits = new HashSet<>();
 
-        lockerUnits.addAll(generateUnits(LockerUnitSizeEnum.SMALL, lockerDTO.getSmallUnits()));
-        lockerUnits.addAll(generateUnits(LockerUnitSizeEnum.MEDIUM, lockerDTO.getMediumUnits()));
-        lockerUnits.addAll(generateUnits(LockerUnitSizeEnum.LARGE, lockerDTO.getLargeUnits()));
+        lockerUnits.addAll(generateUnits(LockerUnitSizeEnum.SMALL, lockerDTO.getSmallUnits(), locker));
+        lockerUnits.addAll(generateUnits(LockerUnitSizeEnum.MEDIUM, lockerDTO.getMediumUnits(), locker));
+        lockerUnits.addAll(generateUnits(LockerUnitSizeEnum.LARGE, lockerDTO.getLargeUnits(), locker));
 
         return lockerUnits;
     }
 
-    private Set<LockerUnit> generateUnits(LockerUnitSizeEnum size, int count) {
+    private Set<LockerUnit> generateUnits(LockerUnitSizeEnum size, int count, Locker locker) {
         Set<LockerUnit> units = new HashSet<>();
 
         for (int i = 1; i <= count; i++) {
             LockerUnit lockerUnit = new LockerUnit(size);
             lockerUnit.setOccupied(false);
+            lockerUnit.setLocker(locker);
+
+            lockerUnit = this.lockerUnitRepository.save(lockerUnit);
+
             units.add(lockerUnit);
         }
+
         return units;
     }
 }
