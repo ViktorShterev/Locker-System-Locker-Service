@@ -21,7 +21,7 @@ public class LockerUnit {
     @Column(name = "package_id")
     private Long packageId;
 
-    @Column(unique = true, name = "access_code")
+    @Column(name = "access_code")
     private String accessCode;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -21,7 +21,7 @@ public class Locker {
     @Enumerated(EnumType.STRING)
     private LockerStatusEnum lockerStatus;
 
-    @OneToMany(mappedBy = "locker")
+    @OneToMany(mappedBy = "locker",fetch = FetchType.EAGER)
     private Set<LockerUnit> lockerUnits;
 
     public Locker(String location, Set<LockerUnit> lockerUnits) {
