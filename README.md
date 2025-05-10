@@ -9,11 +9,10 @@ The **Locker Service** is one of the core microservices in the **SmartLockerHub*
 - **Java 17**
 - **Spring Boot 3**
 - **Spring Data JPA**
-- **MySQL**
+- **MS SQL**
 - **Apache Kafka**
-- **Lombok**
-- **MapStruct**
-- **Validation (Jakarta Bean Validation)**
+- **Gradle**
+- **JWT**
 - **Spring Web**
 
 ---
@@ -33,9 +32,9 @@ The **Locker Service** is one of the core microservices in the **SmartLockerHub*
 
 | Method | Endpoint                         | Description                                    |
 |--------|----------------------------------|------------------------------------------------|
-| GET    | `/lockers/availability`          | Get count of available units by size/location |
-| GET    | `/lockers/available-units`       | Get list of available unit IDs                |
-| POST   | `/lockers/create`                | Create a new locker with predefined units     |
+| GET    | `/lockers/locations`             | Get count of available units by size/location |
+| GET    | `/lockers/availability`          | Get list of available unit IDs                |
+| POST   | `/lockers/create-locker`         | Create a new locker with predefined units     |
 
 ---
 
@@ -43,6 +42,9 @@ The **Locker Service** is one of the core microservices in the **SmartLockerHub*
 
 - **Consumer Topic:** `package-placed`  
   Marks a locker unit as occupied when a courier delivers a package.
+
+- **Consumer Topic:** `package-received`  
+  Marks a locker unit as free when a customer picks up his package.
 
 - **Producer Topic:** `access-code-created`  
   Sends access code info to the User Service for further processing and email dispatch.
