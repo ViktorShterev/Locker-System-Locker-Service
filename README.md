@@ -1,6 +1,6 @@
 # Locker Service – SmartLockerHub
 
-The **Locker Service** is one of the core microservices in the **SmartLockerHub** system — a distributed application for managing smart package lockers. This service is responsible for managing locker locations, units, availability, and locker unit status updates upon package placement or retrieval. Communicating via Kafka and REST with the [**Package-Service**][(https://github.com/ViktorShterev/Locker-System-Package-Service/tree/master) and [**User-Service**](https://github.com/ViktorShterev/Locker-System-Main-Service/tree/master)
+The **Locker Service** is one of the core microservices in the **SmartLockerHub** system — a distributed application for managing smart package lockers. This service is responsible for managing locker locations, units, availability, and locker unit status updates upon package placement or retrieval. Communicating via Kafka and REST with the [**Package-Service**](https://github.com/ViktorShterev/Locker-System-Package-Service/tree/master) and [**User-Service**](https://github.com/ViktorShterev/Locker-System-Main-Service/tree/master)
 
 ---
 
@@ -22,7 +22,7 @@ The **Locker Service** is one of the core microservices in the **SmartLockerHub*
 - Manage locker locations and units (small, medium, large).
 - Track availability by location and locker size.
 - Listen to Kafka events (e.g., `package-placed`) to mark locker units as occupied.
-- Generate and store alphanumeric access codes.
+- Store alphanumeric access codes.
 - Send access codes via Kafka to the User Service.
 - Provide REST APIs for availability checking and unit allocation.
 
